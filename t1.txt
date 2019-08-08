@@ -1,0 +1,6 @@
+main 	: 맨 처음 로딩 화면
+calendar	: 달력 아이콘 눌렀을 때 나오는 월 달력 화면
+daily	: 오늘의할일+달성률 화면
+weekly	: 주별 통계 화면
+monthly	: 월별 통계 화면
+login	: 로그인 화면
