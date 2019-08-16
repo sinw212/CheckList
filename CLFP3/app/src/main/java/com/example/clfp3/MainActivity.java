@@ -1,12 +1,15 @@
 package com.example.clfp3;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,6 +17,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,13 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
     TextView Text_daily,Text_weekly,Text_monthly,Text_login;
 
+    BottomNavigationView bottomNavigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.daily3);
-
-        Intent loading = new Intent(this, LoadingActivity.class);
-        startActivity(loading);
 
         ImageButton button_plus = (ImageButton) findViewById(R.id.button_plus) ;
         edit_text = (EditText) findViewById(R.id.edit_text);
@@ -64,38 +68,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Text_daily = (TextView) findViewById(R.id.Text_daily);
-        Text_weekly = (TextView) findViewById(R.id.Text_weekly);
-        Text_monthly = (TextView) findViewById(R.id.Text_monthly);
-        Text_login = (TextView) findViewById(R.id.Text_login);
-
-        Text_weekly.setOnClickListener(new View.OnClickListener() {
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,Weekly.class);
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_daily:
 
-                startActivity(intent);
+                        break;
+                    case R.id.action_weekly:
+
+                        break;
+                    case R.id.action_monthly:
+
+                        break;
+                    case R.id.action_help:
+
+                        break;
+                }
+                return true;
             }
         });
-
-        Text_monthly.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,Monthly.class);
-
-                startActivity(intent);
-            }
-        });
-
-        Text_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,Login.class);
-
-                startActivity(intent);
-            }
-        });
-
 
         TextView textview_date = (TextView) findViewById(R.id.textview_date);
 

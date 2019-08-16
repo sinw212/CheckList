@@ -8,14 +8,14 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 
-public class Login extends AppCompatActivity {
+public class Help extends AppCompatActivity {
 
     TextView Text_daily,Text_weekly,Text_monthly,Text_login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login3);
+        setContentView(R.layout.help3);
 
         Text_daily = (TextView) findViewById(R.id.Text_daily);
         Text_weekly = (TextView) findViewById(R.id.Text_weekly);
@@ -25,7 +25,7 @@ public class Login extends AppCompatActivity {
         Text_daily.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Login.this,MainActivity.class);
+                Intent intent = new Intent(Help.this,MainActivity.class);
 
                 startActivity(intent);
             }
@@ -34,7 +34,7 @@ public class Login extends AppCompatActivity {
         Text_weekly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Login.this, Weekly.class);
+                Intent intent = new Intent(Help.this, Weekly.class);
 
                 startActivity(intent);
             }
@@ -43,7 +43,7 @@ public class Login extends AppCompatActivity {
         Text_monthly.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Login.this, Monthly.class);
+                Intent intent = new Intent(Help.this, Monthly.class);
 
                 startActivity(intent);
             }
