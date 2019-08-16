@@ -5,21 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/monthlylayout"
     tools:context=".MainActivity">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:text="2019년"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.120"
-        app:layout_constraintVertical_bias="0.055" />
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -33,18 +19,60 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_navigation" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="70dp"
-        android:layout_height="75dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.900"
-        app:layout_constraintVertical_bias="0.045"
-        app:srcCompat="@drawable/calendar"
-        tools:layout_editor_absoluteX="310dp"
-        tools:layout_editor_absoluteY="30dp" />
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="7"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text ="월별 통계  "
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:textSize="30sp"
+                android:layout_weight="3"/>
+
+            <TextView
+                android:id="@+id/textview_date"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"/>
+
+            <ImageButton
+                android:id="@+id/button_calender"
+                android:layout_width="0dp"
+                android:layout_height="38dp"
+                android:layout_marginTop="6dp"
+                android:layout_weight="2"
+                android:background="@drawable/calendar"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="545dp"
+            tools:context="app.num.linechart.MainActivity">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="0dp" />
+
+        </RelativeLayout>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
