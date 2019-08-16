@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.daily3);
+        setContentView(R.layout.activity_main);
 
         ImageButton button_plus = (ImageButton) findViewById(R.id.button_plus) ;
         edit_text = (EditText) findViewById(R.id.edit_text);
@@ -86,15 +86,19 @@ public class MainActivity extends AppCompatActivity {
 
                         break;
                 }
+
                 return true;
             }
         });
 
-        TextView textview_date = (TextView) findViewById(R.id.textview_date);
+     TextView textview_date = (TextView) findViewById(R.id.textview_date);
 
         textview_date.setText(getTime());
 
-    }
+}
+
+
+
 
     private String getTime(){
         mNow = System.currentTimeMillis();

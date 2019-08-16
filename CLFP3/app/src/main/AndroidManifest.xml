@@ -24,7 +24,7 @@
         <activity android:name=".Weekly" />
         <activity android:name=".Monthly" />
         <activity android:name=".Help" />
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>
