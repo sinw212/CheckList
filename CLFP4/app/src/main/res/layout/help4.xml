@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:background="@color/background"
+        app:itemIconTint="@color/iconText"
+        app:itemTextColor="@color/iconText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation" />
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:orientation="vertical"
+            android:paddingTop="5dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="도움말"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:paddingBottom="20dp"
+                android:textColor="@android:color/black"
+                android:fontFamily="bold"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="
+ 본 서비스는 사용자의 계획 달성률을 통계내어 성과를 보여줌으로써 보다 효율적인 관리를 할 수 있도록 도움을 제공하는 서비스입니다.
+제공되는 기능은 아래와 같습니다.\n\n
+
+- 일일 : 사용자가 그 날 할 일을 기록할 수 있으며, 본인의 계획 달성 여부를 체크함으로써 일일 달성률을 확인할 수 있습니다.\n\n
+- 주간 : 매 달의 주간 평균 달성률을 꺾은선 그래프를 통해 한눈에 확인할 수 있습니다.\n\n
+- 월별 : 매 달의 평균 달성률을 꺾은선 그래프를 통해 한눈에 확인할 수 있습니다.\n\n
+- 달력 : 매 달의 달력 및 일일 달성률을 한눈에 확인할 수 있으며, 해당 날짜를 누르면 해당 일일 메뉴로 이동할 수 있습니다.\n\n
+
+ @copyright CLFP\n\n
+  문의연락 : sinw212@gmail.com"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
