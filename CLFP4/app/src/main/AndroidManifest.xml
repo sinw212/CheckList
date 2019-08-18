@@ -25,6 +25,13 @@
         <activity android:name=".MainActivity">
 
         </activity>
+
+        <receiver android:name=".AlarmReceiver">
+            <intent-filter>
+                <action android:name="com.test.alarmtestous.ALARM_START" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
