@@ -94,8 +94,7 @@
             android:layout_width="wrap_content"
             android:layout_height="450dp"
             android:layout_marginTop="15dp"
-            android:choiceMode="multipleChoice"
-            android:gravity="left"/>
+            android:choiceMode="multipleChoice" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -112,11 +111,11 @@
 
             <TextView
                 android:id="@+id/textview_goal"
-                android:layout_width="70dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
+                android:gravity="left"
                 android:textColor="@android:color/black"
-                android:textSize="30sp"
-                android:layout_gravity="left"/>
+                android:textSize="30sp" />
 
         </LinearLayout>
     </LinearLayout>

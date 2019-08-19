@@ -109,6 +109,7 @@ public class daily4 extends Fragment {
                 }
                 listview.clearChoices();
                 adapter.notifyDataSetChanged();
+                textview_goal.setText("0 %");
             }
         });
 
