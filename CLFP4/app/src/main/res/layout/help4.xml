@@ -10,8 +10,8 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:paddingTop="30dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:text="도움말"
                 android:gravity="center"
                 android:textSize="25sp"
-                android:paddingBottom="20dp"
+                android:paddingBottom="30dp"
                 android:textColor="@android:color/black"
                 android:fontFamily="bold"/>
 
