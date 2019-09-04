@@ -23,6 +23,7 @@
         android:id="@+id/login"
         android:enabled="true"
         android:icon="@drawable/ic_help_outline_black_24dp"
-        android:title="로그인"/>
+        android:title="도움말"/>
+
 
 </menu>

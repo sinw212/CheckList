@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.clfp4">
 
     <application
@@ -25,6 +26,17 @@
         <activity android:name=".MainActivity">
 
         </activity>
+
+        <receiver
+
+            android:name=".AlarmReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remote" >
+
+        </receiver>
+
     </application>
+
 
 </manifest>

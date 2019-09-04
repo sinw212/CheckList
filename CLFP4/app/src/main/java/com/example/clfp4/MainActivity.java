@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.frame_layout, daily4).commitAllowingStateLoss();
 
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     }
                 }
-                return false;
+                return true;
             }
         });
     }
