@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,12 +35,15 @@ public class daily4 extends Fragment {
     View view;
     long mNow;
     Date mDate;
-    SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년 MM월 dd일");
-    ArrayList<String> items;
+
+    //    SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년 MM월 dd일");
+    //    ArrayList<String> items;
     EditText edit_text;
-    ArrayAdapter<String> adapter;
+    SimpleDateFormat mFormat = new SimpleDateFormat("hh시 mm분 ss초");
+    //    ArrayAdapter<String> adapter;
+    CustomChoiceListViewAdapter adapter;
     ListView listview;
-    SparseBooleanArray checkedItems;
+    //    SparseBooleanArray checkedItems;
     String getEdit;
     double count = 0.0;
     double count_all = 0.0;
@@ -51,12 +55,12 @@ public class daily4 extends Fragment {
     int t1;
 
     Calendar c;
-    int nYear,nMon,nDay;
+    int nYear, nMon, nDay;
     DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.daily4, container, false);
 
         // 오늘 날짜 표현
@@ -70,13 +74,16 @@ public class daily4 extends Fragment {
 
         edit_text = (EditText) view.findViewById(R.id.edit_text);
 
-        items = new ArrayList<String>();
-        // ArrayAdapter 생성. 아이템 View를 선택(multiple choice)가능하도록 만듦.
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_multiple_choice, items) ;
+//        items = new ArrayList<String>();
+//         ArrayAdapter 생성. 아이템 View를 선택(multiple choice)가능하도록 만듦.
+//        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_multiple_choice, items) ;
 
-        // listview 생성 및 adapter 지정.
-        listview = (ListView) view.findViewById(R.id.listview1) ;
-        listview.setAdapter(adapter) ;
+        //Adapter 생성
+        adapter = new CustomChoiceListViewAdapter();
+
+        // 리스트뷰 참조 및 Adapter달기
+        listview = (ListView) view.findViewById(R.id.listview1);
+        listview.setAdapter(adapter);
 
         // 데이터 표현
         SharedPreferences prefs = getContext().getSharedPreferences("my", MODE_PRIVATE);
@@ -85,10 +92,8 @@ public class daily4 extends Fragment {
         for (int i = 0; i < t1+1; i++) {
             String tx;
             tx = prefs.getString("" + i, null);
-            if(tx == null){
-            }
-            else{
-                items.add(i, tx);
+            if(tx != null ){
+                adapter.addItem(tx);
             }
         }
 
@@ -101,15 +106,15 @@ public class daily4 extends Fragment {
 
                         strDate = String.valueOf(year) + "년 ";
 
-                        if(monthOfYear+1 > 0 && monthOfYear+1 < 10)
-                            strDate += "0" + String.valueOf(monthOfYear+1) + "월 ";
+                        if (monthOfYear + 1 > 0 && monthOfYear + 1 < 10)
+                            strDate += "0" + String.valueOf(monthOfYear + 1) + "월 ";
                         else
-                            strDate += String.valueOf(monthOfYear+1) + "월 ";
+                            strDate += String.valueOf(monthOfYear + 1) + "월 ";
 
-                        if(dayOfMonth+1 > 0 && dayOfMonth+1 < 10)
-                            strDate += "0" + String.valueOf(dayOfMonth+1) + "일";
+                        if (dayOfMonth + 1 > 0 && dayOfMonth + 1 < 10)
+                            strDate += "0" + String.valueOf(dayOfMonth + 1) + "일";
                         else
-                            strDate += String.valueOf(dayOfMonth+1) + "일";
+                            strDate += String.valueOf(dayOfMonth + 1) + "일";
 
                         textview_date.setText(strDate);
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
@@ -138,51 +143,60 @@ public class daily4 extends Fragment {
             public void onClick(View view) {
                 getEdit = edit_text.getText().toString();
 
-                if(getEdit.getBytes().length <= 0) {
+                if (getEdit.getBytes().length <= 0) {
                     Toast.makeText(getContext(), "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    items.add(getEdit);
+                } else {
+//                    items.add(getEdit);
+                    adapter.addItem(getEdit);
 
                     // listview 갱신
                     adapter.notifyDataSetChanged();
                     edit_text.setText("");
-
                 }
-
+                setGoal();
             }
         });
         // 수정 버튼 리스너
         modifyButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkedItems = listview.getCheckedItemPositions();
-                int count = adapter.getCount() ;
+//                checkedItems = listview.getCheckedItemPositions();
+//                int count = adapter.getCount() ;
+                SparseBooleanArray checkedItems = listview.getCheckedItemPositions();
+                int count = adapter.getCount();
 
-                for (int i = count-1; i >= 0; i--) {
+                for (int i = count - 1; i >= 0; i--) {
                     if (checkedItems.get(i)) {
-                        items.set(i,"") ;
-                        items.set(i,edit_text.getText().toString()) ;
+//                        items.set(i,"") ;
+//                        items.set(i,edit_text.getText().toString()) ;
+                        adapter.setItem(i, edit_text.getText().toString());
                     }
                 }
                 adapter.notifyDataSetChanged();
-                edit_text.setText("");
+//                edit_text.setText("");
+                listview.clearChoices();
+
+                setGoal();
             }
-        }) ;
+        });
         // 삭제버튼 리스너
         deleteButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkedItems = listview.getCheckedItemPositions();
+//                checkedItems = listview.getCheckedItemPositions();
+                SparseBooleanArray checkedItems = listview.getCheckedItemPositions();
                 int count = adapter.getCount();
 
-                for(int i=count-1; i>=0; i--) {
+                for (int i = count - 1; i >= 0; i--) {
                     if (checkedItems.get(i)) {
-                        items.remove(i);
+//                        items.remove(i);
+                        adapter.removeItem(i);
                     }
                 }
-                listview.clearChoices();
                 adapter.notifyDataSetChanged();
+
+                listview.clearChoices();
+
                 setGoal();
             }
         });
@@ -242,11 +256,10 @@ public class daily4 extends Fragment {
         count = listview.getCheckedItemCount();
         count_all = adapter.getCount();
 
-        if(count == 0 ) {
+        if (count == 0) {
             textview_goal.setText("0 %");
-        }
-        else {
-            double rate = Double.parseDouble(String.format("%.2f", count/count_all));
+        } else {
+            double rate = Double.parseDouble(String.format("%.2f", count / count_all));
             int goal_rate = (int) (rate * 100);
             textview_goal.setText(goal_rate + " %");
         }
@@ -266,8 +279,14 @@ public class daily4 extends Fragment {
         edit.commit();
 
         //지금까지 생성된 리스트뷰 텍스트 저장
-        for(int i =0; i<listview.getCount(); i++){
-            edit.putString(""+i, items.get(i) );
+        for(int i =0; i< adapter.getCount(); i++){
+
+            edit.putString(""+i, adapter.getItem(i).toString());
+
+            CheckBox cb = (CheckBox) view.findViewById(R.id.checkBox1) ;
+
+            edit.putBoolean("check"+i, cb.isChecked());
+
             edit.putInt("start", i);
 
             //변경된 값 저장
