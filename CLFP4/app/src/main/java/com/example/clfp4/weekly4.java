@@ -39,6 +39,7 @@ public class weekly4 extends Fragment {
     ListView listview;
     DatePickerDialog.OnDateSetListener myDatePicker;
     TextView textview_date;
+    String strDate;
 
     Calendar c;
     int nYear,nMon,nDay;
@@ -71,6 +72,10 @@ public class weekly4 extends Fragment {
                         else{
                             strDate=String.valueOf(monthOfYear+1) + "월";
                         }
+                        if(monthOfYear+1 > 0 && monthOfYear+1 < 10)
+                            strDate = "0" + String.valueOf(monthOfYear+1) + "월";
+                        else
+                            strDate = String.valueOf(monthOfYear+1) + "월";
 
                         textview_date.setText(strDate);
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
