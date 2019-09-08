@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,6 +36,7 @@ public class daily4 extends Fragment {
     long mNow;
     Date mDate;
     SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년 MM월 dd일");
+    SimpleDateFormat Format_for_data = new SimpleDateFormat("YYYYMMdd");
     ArrayList<String> items;
     EditText edit_text;
     ArrayAdapter<String> adapter;
@@ -47,6 +49,7 @@ public class daily4 extends Fragment {
     TextView textview_date;
 
     SharedPreferences pref = null;
+    String date_for_data = "";
     int t1;
 
     Calendar c;
@@ -78,18 +81,7 @@ public class daily4 extends Fragment {
         listview.setAdapter(adapter) ;
 
         // 데이터 표현
-        SharedPreferences prefs = getContext().getSharedPreferences("my", MODE_PRIVATE);
-        t1 = prefs.getInt("start", 0);
 
-        for (int i = 0; i < t1+1; i++) {
-            String tx;
-            tx = prefs.getString("" + i, null);
-            if(tx == null){
-            }
-            else{
-                items.add(i, tx);
-            }
-        }
 
         // Calendar
         //DatePicker Listener
@@ -102,6 +94,37 @@ public class daily4 extends Fragment {
                         strDate += String.valueOf(dayOfMonth) + "일";
 
                         textview_date.setText(strDate);
+
+
+                        date_for_data = "";
+                        date_for_data += String.valueOf(year-2000);
+
+                        if(monthOfYear+1 < 10)
+                            date_for_data += "0"+String.valueOf(monthOfYear+1);
+                        else
+                            date_for_data += String.valueOf(monthOfYear+1);
+
+                        if(dayOfMonth < 10)
+                            date_for_data += "0"+String.valueOf(dayOfMonth);
+                        else
+                            date_for_data += String.valueOf(dayOfMonth);
+
+                        textview_date.setText(date_for_data);
+
+                        SharedPreferences prefs = getContext().getSharedPreferences("my"+date_for_data, MODE_PRIVATE);
+                        t1 = prefs.getInt("start", 0);
+
+                        for (int i = 0; i < t1+1; i++) {
+                            String tx;
+                            tx = prefs.getString("" + i, null);
+                            if(tx == null){
+                            }
+                            else{
+                                items.add(i, tx);
+                            }
+                        }
+
+
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -142,6 +165,7 @@ public class daily4 extends Fragment {
 
             }
         });
+
         // 수정 버튼 리스너
         modifyButton.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
@@ -246,7 +270,7 @@ public class daily4 extends Fragment {
     public void  onPause(){
         super.onPause();
 
-        pref = getContext().getSharedPreferences("my", 0);
+        pref = getContext().getSharedPreferences("my"+date_for_data, 0);
 
         //저장을위해 Edit 객체 호출
         SharedPreferences.Editor edit = pref.edit();

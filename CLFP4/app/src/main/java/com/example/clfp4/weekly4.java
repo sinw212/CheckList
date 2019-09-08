@@ -9,11 +9,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
@@ -45,6 +49,7 @@ public class weekly4 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.weekly4, container, false);
 
+
         // 오늘 날짜 표현
         textview_date = (TextView) view.findViewById(R.id.textview_date);
         textview_date.setText(getTime());
@@ -57,7 +62,15 @@ public class weekly4 extends Fragment {
                 new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
                                           int dayOfMonth) {
-                        String strDate = String.valueOf(monthOfYear+1) + "월";
+
+                        String strDate;
+                        if(monthOfYear > 0 && monthOfYear + 1 < 10){
+                        strDate = "0" + String.valueOf(monthOfYear+1) + "월";
+
+                        }
+                        else{
+                            strDate=String.valueOf(monthOfYear+1) + "월";
+                        }
 
                         textview_date.setText(strDate);
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
@@ -79,6 +92,10 @@ public class weekly4 extends Fragment {
                 oDialog.show();
             }
         });
+
+
+
+
 
         //Chart
         LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
@@ -124,6 +141,7 @@ public class weekly4 extends Fragment {
         lineChart.setDoubleTapToZoomEnabled(false);
         lineChart.setDrawGridBackground(false);
         lineChart.setDescription(description);
+        lineChart.animateY(1000);
         lineChart.invalidate();
 
         return view;
