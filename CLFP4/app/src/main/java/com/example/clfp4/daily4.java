@@ -109,8 +109,21 @@ public class daily4 extends Fragment {
                         else
                             date_for_data += String.valueOf(dayOfMonth);
 
-                        textview_date.setText(date_for_data);
 
+                        // 다른 날짜 선택해도 남아있는 리스트 => 해결
+                        int count = adapter.getCount();
+
+                        for(int i=count-1; i>=0; i--) {
+                                items.remove(i);
+                        }
+
+                        listview.clearChoices();
+                        adapter.notifyDataSetChanged();
+
+                        //textview_date.setText(date_for_data);
+
+
+                        // 리스트 불러오기
                         SharedPreferences prefs = getContext().getSharedPreferences("my"+date_for_data, MODE_PRIVATE);
                         t1 = prefs.getInt("start", 0);
 
