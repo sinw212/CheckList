@@ -18,11 +18,19 @@ public class AlarmReceiver extends BroadcastReceiver {
         //daily4 = (daily4)  getContext();
 
 /*
+<<<<<<< HEAD
 
         daily4.textview_date.setText(daily4.getTime());
 
+=======
+        daily4.textview_date.setText(daily4.getTime());
+>>>>>>> CLFPmaster
         daily4.items.clear();
         daily4.adapter.notifyDataSetChanged();*/
 
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> CLFPmaster

@@ -10,4 +10,8 @@ public class ListViewItem {
     public String getText() {
         return this.text ;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> CLFPmaster

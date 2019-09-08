@@ -9,9 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+<<<<<<< HEAD
         android:paddingTop="10dp"
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
+=======
+        android:paddingTop="30dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+>>>>>>> CLFPmaster
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -24,8 +30,13 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="bold"
                 android:gravity="center"
+<<<<<<< HEAD
                 android:paddingBottom="20dp"
                 android:text="도움말"
+=======
+                android:textSize="25sp"
+                android:paddingBottom="30dp"
+>>>>>>> CLFPmaster
                 android:textColor="@android:color/black"
                 android:textSize="25sp" />
 
@@ -33,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="433dp"
                 android:text="
- 본 서비스는 사용자의 계획 달성률을 통계내어 성과를 보여줌으로써 보다 효율적인 관리를 할 수 있도록 도움을 제공하는 서비스입니다.
+ 본 서비스는 사용자의 계획 달성률을 통계내어 성과를 보여줌으로써, 보다 효율적인 자기관리를 할 수 있도록 도움을 제공하는 서비스입니다.
 제공되는 기능은 아래와 같습니다.\n\n
 
 - 일일 : 사용자가 그 날 할 일을 기록할 수 있으며, 본인의 계획 달성 여부를 체크함으로써 일일 달성률을 확인할 수 있습니다.\n\n

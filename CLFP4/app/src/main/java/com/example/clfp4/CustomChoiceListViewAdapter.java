@@ -56,10 +56,16 @@ public class CustomChoiceListViewAdapter extends BaseAdapter {
     // 지정한 위치(position)에 있는 데이터 리턴 : 필수 구현
     @Override
     public Object getItem(int position) {
+<<<<<<< HEAD
         return listViewItemList.get(position) ;
     }
 
 
+=======
+        return listViewItemList.get(position).getText() ;
+    }
+
+>>>>>>> CLFPmaster
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
     public void addItem(String text) {
         ListViewItem item = new ListViewItem();
@@ -67,7 +73,10 @@ public class CustomChoiceListViewAdapter extends BaseAdapter {
         item.setText(text);
 
         listViewItemList.add(item);
+<<<<<<< HEAD
 
+=======
+>>>>>>> CLFPmaster
     }
 
     // 아이템 수정을 위한 함수.
@@ -78,9 +87,16 @@ public class CustomChoiceListViewAdapter extends BaseAdapter {
         listViewItemList.set(i,item);
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> CLFPmaster
     // 아이템 삭제를 위한 함수.
     public void removeItem(int i){
         listViewItemList.remove(i);
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> CLFPmaster
