@@ -45,6 +45,7 @@ public class daily4 extends Fragment {
     double count_all = 0.0;
     TextView textview_goal;
     TextView textview_date;
+    String strDate;
 
     SharedPreferences pref = null;
     int t1;
@@ -97,9 +98,18 @@ public class daily4 extends Fragment {
                 new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker view, int year, int monthOfYear,
                                           int dayOfMonth) {
-                        String strDate = String.valueOf(year) + "년 ";
-                        strDate += String.valueOf(monthOfYear+1) + "월 ";
-                        strDate += String.valueOf(dayOfMonth) + "일";
+
+                        strDate = String.valueOf(year) + "년 ";
+
+                        if(monthOfYear+1 > 0 && monthOfYear+1 < 10)
+                            strDate += "0" + String.valueOf(monthOfYear+1) + "월 ";
+                        else
+                            strDate += String.valueOf(monthOfYear+1) + "월 ";
+
+                        if(dayOfMonth+1 > 0 && dayOfMonth+1 < 10)
+                            strDate += "0" + String.valueOf(dayOfMonth+1) + "일";
+                        else
+                            strDate += String.valueOf(dayOfMonth+1) + "일";
 
                         textview_date.setText(strDate);
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
