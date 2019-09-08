@@ -38,6 +38,7 @@ public class daily4 extends Fragment {
     Date mDate;
 
     SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년 MM월 dd일");
+    SimpleDateFormat Format_today = new SimpleDateFormat("YYYYMMdd");
     ArrayList<String> items;
 
     //    ArrayList<String> items;
@@ -91,6 +92,17 @@ public class daily4 extends Fragment {
 
         // 데이터 표현
 
+        mNow = System.currentTimeMillis();
+        mDate = new Date(mNow);
+        String date_today = Format_today.format(mDate);
+
+//        textview_date.setText(date_today);
+
+
+
+        //오늘날짜 데이터 바로 불러오기
+        getData(date_today);
+
 
         // Calendar
         //DatePicker Listener
@@ -115,7 +127,7 @@ public class daily4 extends Fragment {
 
 
                         date_for_data = "";
-                        date_for_data += String.valueOf(year-2000);
+                        date_for_data += String.valueOf(year);
 
                         if(monthOfYear + 1 > 0 && monthOfYear+1 < 10)
                             date_for_data += "0"+String.valueOf(monthOfYear+1);
@@ -129,8 +141,6 @@ public class daily4 extends Fragment {
 
 
                         // 다른 날짜 선택해도 남아있는 리스트 => 해결
-//
-
                         SparseBooleanArray checkedItems = listview.getCheckedItemPositions();
                         int count = adapter.getCount();
 
@@ -142,19 +152,15 @@ public class daily4 extends Fragment {
                         listview.clearChoices();
 
 
-                        //textview_date.setText(date_for_data);
+//                        textview_date.setText(date_for_data);
 
 
                         // 리스트 불러오기
-                        SharedPreferences prefs = getContext().getSharedPreferences("my"+date_for_data, MODE_PRIVATE);
-                        t1 = prefs.getInt("start", 0);
-                        for (int i = 0; i < t1+1; i++) {
-                            String tx;
-                            tx = prefs.getString("" + i, null);
-                            if(tx != null ){
-                                adapter.addItem(tx);
-                            }
-                        }
+                        getData(date_for_data);
+
+
+
+
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -283,6 +289,23 @@ public class daily4 extends Fragment {
 
         return view;
     }
+
+    public void getData(String date)
+    {
+        SharedPreferences prefs = getContext().getSharedPreferences("my"+date, MODE_PRIVATE);
+        t1 = prefs.getInt("start", 0);
+        for (int i = 0; i < t1+1; i++) {
+            String tx;
+            tx = prefs.getString("" + i, null);
+            if(tx != null ){
+                adapter.addItem(tx);
+            }
+
+//            String check;
+//            check = prefs.get
+        }
+    }
+
 
     public String getTime() {
         mNow = System.currentTimeMillis();
