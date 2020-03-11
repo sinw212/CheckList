@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -27,30 +26,36 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class weekly4 extends Fragment {
-    long mNow;
-    Date mDate;
-    SimpleDateFormat mFormat = new SimpleDateFormat("MM월");
-    ArrayList<String> items;
-    ListView listview;
-    DatePickerDialog.OnDateSetListener myDatePicker;
-    TextView textview_date;
-    String strDate;
+public class Daily_Statistics_Fragment extends Fragment {
+    private long mNow;
+    private Date mDate;
+    private SimpleDateFormat mFormat = new SimpleDateFormat("MM월");
 
-    Calendar c;
-    int nYear,nMon,nDay;
-    DatePickerDialog.OnDateSetListener mDateSetListener;
+    private Calendar c;
+    private int nYear,nMon,nDay;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+
+    private String strDate;
+    private TextView tv_date;
+    private ImageButton btn_calendar;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.weekly4, container, false);
+        View v = inflater.inflate(R.layout.fragment_daily_statistics, container, false);
+
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        tv_date = getView().findViewById(R.id.tv_date);
+        btn_calendar = getView().findViewById(R.id.btn_calender);
 
         // 오늘 날짜 표현
-        textview_date = (TextView) view.findViewById(R.id.textview_date);
-        textview_date.setText(getTime());
-
-        ImageButton button_calendar = (ImageButton) view.findViewById(R.id.button_calender);
+        tv_date.setText(getTime());
 
         // Calendar
         //DatePicker Listener
@@ -63,7 +68,7 @@ public class weekly4 extends Fragment {
                         else
                             strDate = String.valueOf(monthOfYear+1) + "월";
 
-                        textview_date.setText(strDate);
+                        tv_date.setText(strDate);
                         //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
                     }
                 };
@@ -73,7 +78,8 @@ public class weekly4 extends Fragment {
         nMon = c.get(Calendar.MONTH);
         nDay = c.get(Calendar.DAY_OF_MONTH);
 
-        button_calendar.setOnClickListener(new ImageButton.OnClickListener() {
+        // 달력 아이콘 리스너
+        btn_calendar.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -85,7 +91,7 @@ public class weekly4 extends Fragment {
         });
 
         //Chart
-        LineChart lineChart = (LineChart) view.findViewById(R.id.chart);
+        LineChart chart_daily_statistics = getView().findViewById(R.id.chart_daily_statistics);
 
         ArrayList<Entry> entries = new ArrayList<>();
         entries.add(new Entry(1, 1));
@@ -107,17 +113,17 @@ public class weekly4 extends Fragment {
         lineDataSet.setDrawValues(false);
 
         LineData lineData = new LineData(lineDataSet);
-        lineChart.setData(lineData);
+        chart_daily_statistics.setData(lineData);
 
-        XAxis xAxis = lineChart.getXAxis();
+        XAxis xAxis = chart_daily_statistics.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTextColor(Color.BLACK);
         xAxis.enableGridDashedLine(8, 24, 0);
 
-        YAxis yLAxis = lineChart.getAxisLeft();
+        YAxis yLAxis = chart_daily_statistics.getAxisLeft();
         yLAxis.setTextColor(Color.BLACK);
 
-        YAxis yRAxis = lineChart.getAxisRight();
+        YAxis yRAxis = chart_daily_statistics.getAxisRight();
         yRAxis.setDrawLabels(false);
         yRAxis.setDrawAxisLine(false);
         yRAxis.setDrawGridLines(false);
@@ -125,13 +131,12 @@ public class weekly4 extends Fragment {
         Description description = new Description();
         description.setText("");
 
-        lineChart.setDoubleTapToZoomEnabled(false);
-        lineChart.setDrawGridBackground(false);
-        lineChart.setDescription(description);
-        lineChart.invalidate();
-
-        return view;
+        chart_daily_statistics.setDoubleTapToZoomEnabled(false);
+        chart_daily_statistics.setDrawGridBackground(false);
+        chart_daily_statistics.setDescription(description);
+        chart_daily_statistics.invalidate();
     }
+
     private String getTime() {
         mNow = System.currentTimeMillis();
         mDate = new Date(mNow);

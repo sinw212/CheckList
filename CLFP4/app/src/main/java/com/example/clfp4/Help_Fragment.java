@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class help4 extends Fragment {
+public class Help_Fragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.help4, container, false);
-        return view;
+        View v = inflater.inflate(R.layout.fragment_help, container, false);
+        return v;
     }
 }

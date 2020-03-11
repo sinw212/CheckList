@@ -10,37 +10,41 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class monthly4 extends Fragment {
-    long mNow;
-    Date mDate;
-    SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년");
-    ArrayList<String> items;
-    ListView listview;
-    DatePickerDialog.OnDateSetListener myDatePicker;
-    TextView textview_date;
+public class Monthly_Statistics_Fragment extends Fragment {
+    private long mNow;
+    private Date mDate;
+    private SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년");
 
-    Calendar c;
-    int nYear,nMon,nDay;
-    DatePickerDialog.OnDateSetListener mDateSetListener;
+    private Calendar c;
+    private int nYear,nMon,nDay;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+
+    private TextView tv_date;
+    private ImageButton btn_calendar;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.monthly4, container, false);
+        View v = inflater.inflate(R.layout.fragment_monthly_statistics, container, false);
+
+        return v;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        tv_date = getView().findViewById(R.id.tv_date);
+        btn_calendar = getView().findViewById(R.id.btn_calender);
 
         // 오늘 날짜 표현
-        textview_date = (TextView) view.findViewById(R.id.textview_date);
-        textview_date.setText(getTime());
-
-        ImageButton button_calendar = (ImageButton) view.findViewById(R.id.button_calender);
+        tv_date.setText(getTime());
 
         // Calendar
         //DatePicker Listener
@@ -50,8 +54,7 @@ public class monthly4 extends Fragment {
                                           int dayOfMonth) {
                         String strDate = String.valueOf(year) + "년";
 
-                        textview_date.setText(strDate);
-                        //Toast.makeText(getContext(), strDate, Toast.LENGTH_SHORT).show();
+                        tv_date.setText(strDate);
                     }
                 };
 
@@ -60,7 +63,8 @@ public class monthly4 extends Fragment {
         nMon = c.get(Calendar.MONTH);
         nDay = c.get(Calendar.DAY_OF_MONTH);
 
-        button_calendar.setOnClickListener(new ImageButton.OnClickListener() {
+        // 달력 아이콘 리스너
+        btn_calendar.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View view) {
 
@@ -70,9 +74,8 @@ public class monthly4 extends Fragment {
                 oDialog.show();
             }
         });
-
-        return view;
     }
+
     private String getTime() {
         mNow = System.currentTimeMillis();
         mDate = new Date(mNow);
