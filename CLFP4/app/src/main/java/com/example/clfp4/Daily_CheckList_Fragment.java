@@ -1,8 +1,8 @@
 package com.example.clfp4;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,13 +16,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.example.clfp4.ListView.CheckListAdapter;
 
 import java.text.SimpleDateFormat;
@@ -32,7 +29,7 @@ import java.util.Date;
 public class Daily_CheckList_Fragment extends Fragment {
     private long mNow;
     private Date mDate;
-    private SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년 MM월 dd일");
+    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
 
     private Calendar c;
     private int nYear, nMon, nDay;
@@ -42,17 +39,14 @@ public class Daily_CheckList_Fragment extends Fragment {
     private ImageButton btn_calendar;
     private Button btn_add;
     private EditText et_today_todo;
-    private SwipeMenuListView listview_todolist;
+    private ListView listview_todolist;
     private CheckListAdapter checklistAdapter;
 
-    private String Number;
-    private int number = 1;
     private String getEdit;
     private double count = 0.0;
     private double count_all = 0.0;
 
     int ck_arr[] = new int[100];
-
 
     @Nullable
     @Override
@@ -72,7 +66,6 @@ public class Daily_CheckList_Fragment extends Fragment {
         btn_add = getView().findViewById(R.id.btn_add);
         et_today_todo = getView().findViewById(R.id.et_today_todo);
         listview_todolist = getView().findViewById(R.id.listview_todolist);
-        Number = "";
         getEdit = "";
 
         // 오늘 날짜 표현
@@ -82,69 +75,55 @@ public class Daily_CheckList_Fragment extends Fragment {
         checklistAdapter = new CheckListAdapter();
 
         // 리스트뷰 참조 및 Adapter달기
-        listview_todolist = getView().findViewById(R.id.listview_todolist);
-        listview_todolist.setSwipeDirection(SwipeMenuListView.DIRECTION_LEFT);
-
         listview_todolist.setAdapter(checklistAdapter);
-
-        SwipeMenuCreator creator = new SwipeMenuCreator() {
-
-            @Override
-            public void create(SwipeMenu menu) {
-                // Create different menus depending on the view type
-                SwipeMenuItem modifyItem = new SwipeMenuItem(getActivity());
-                // set item background
-                modifyItem.setBackground(new ColorDrawable(Color.rgb(187, 187, 187)));
-                // set item width
-                modifyItem.setWidth(dp2px(90));
-                // add to menu
-                menu.addMenuItem(modifyItem);
-                // create "delete" item
-                SwipeMenuItem deleteItem = new SwipeMenuItem(getActivity());
-                // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(198, 67, 40)));
-                // set item width
-                deleteItem.setWidth(dp2px(90));
-                // set a icon
-                deleteItem.setIcon(R.drawable.delete);
-                // add to menu
-                menu.addMenuItem(deleteItem);
-            }
-
-        };
-        // set creator
-        listview_todolist.setMenuCreator(creator);
-
-        listview_todolist.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-                switch (index) {
-                    case 0:
-//                        checklistAdapter.setItem(position, et_today_todo.getText().toString());
-
-                        checklistAdapter.notifyDataSetChanged();
-                        et_today_todo.setText("");
-
-                        setGoal();
-                        break;
-                    case 1:
-//                        checklistAdapter.removeItem(position);
-
-                        checklistAdapter.notifyDataSetChanged();
-
-                        setGoal();
-                        break;
-                }
-                return true;
-            }
-
-        });
 
         // 리스트뷰 리스너
         listview_todolist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 setGoal();
+            }
+        });
+
+        listview_todolist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view,
+                                           final int position, long id) {
+
+                AlertDialog.Builder alertDlg = new AlertDialog.Builder(view.getContext());
+                alertDlg.setTitle("삭제");
+
+                // '예' 버튼이 클릭되면
+                alertDlg.setPositiveButton( "예", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick( DialogInterface dialog, int which )
+                    {
+                        checklistAdapter.removeItem(position);
+
+                        // 아래 method를 호출하지 않을 경우, 삭제된 item이 화면에 계속 보여진다.
+                        checklistAdapter.notifyDataSetChanged();
+                        dialog.dismiss();  // AlertDialog를 닫는다.
+                    }
+                });
+
+                // '아니오' 버튼이 클릭되면
+                alertDlg.setNegativeButton( "아니오", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick( DialogInterface dialog, int which ) {
+                        dialog.dismiss();  // AlertDialog를 닫는다.
+                    }
+                });
+
+                alertDlg.setMessage( "삭제하시겠습니까?");
+                alertDlg.show();
+
+                setGoal();
+
+                // 이벤트 처리 종료 , 여기만 리스너 적용시키고 싶으면 true , 아니면 false
+                return true;
             }
         });
 
@@ -193,14 +172,11 @@ public class Daily_CheckList_Fragment extends Fragment {
             @Override
             public void onClick(View view) {
                 getEdit = et_today_todo.getText().toString();
-                //임시 세팅
-                Number = String.valueOf(number);
-                number++;
 
                 if (getEdit.getBytes().length <= 0) {
                     Toast.makeText(getContext(), "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
-                    checklistAdapter.addItem(Number, getEdit);
+                    checklistAdapter.addItem(getEdit);
 
                     // listview 갱신
                     checklistAdapter.notifyDataSetChanged();
@@ -222,18 +198,17 @@ public class Daily_CheckList_Fragment extends Fragment {
         count = listview_todolist.getCheckedItemCount();
         count_all = checklistAdapter.getCount();
 
-        if (count == 0) {
-            tv_goal.setText("0 %");
-        } else {
+        if (count > 0) {
             double rate = Double.parseDouble(String.format("%.2f", count / count_all));
             int goal_rate = (int) (rate * 100);
             tv_goal.setText(goal_rate + " %");
+        } else {
+            tv_goal.setText("0 %");
         }
     }
 
     private int dp2px(int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 getResources().getDisplayMetrics());
-
     }
 }

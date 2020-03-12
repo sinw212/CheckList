@@ -23,14 +23,13 @@ android {
 
 dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-beta4'
     implementation 'com.android.support:design:28.0.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'org.jetbrains:annotations-java5:15.0'
-    implementation 'com.baoyz.swipemenulistview:library:1.3.0' //리스트뷰 슬라이드 라이브러리
+//    implementation 'com.baoyz.swipemenulistview:library:1.3.0' //리스트뷰 슬라이드 라이브러리
 }
