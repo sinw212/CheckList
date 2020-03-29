@@ -29,7 +29,7 @@ import java.util.Date;
 public class Daily_Statistics_Fragment extends Fragment {
     private long mNow;
     private Date mDate;
-    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy년 MM월 dd일");
+    private SimpleDateFormat mFormat = new SimpleDateFormat("MM월");
 
     private Calendar c;
     private int nYear,nMon,nDay;
