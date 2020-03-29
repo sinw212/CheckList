@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -185,6 +184,18 @@ public class Daily_CheckList_Fragment extends Fragment {
                 setGoal();
             }
         });
+
+//        이거 써야함
+//        public void onClick(View view) {
+//            try {
+//                String result;
+//                CustomTask task = new CustomTask();
+//                result = task.execute("rain483","1234").get();
+//                Log.i("리턴 값",result);
+//            } catch (Exception e) {
+//
+//            }
+//        }
     }
 
     public String getTime(SimpleDateFormat Format) {
@@ -205,10 +216,5 @@ public class Daily_CheckList_Fragment extends Fragment {
         } else {
             tv_goal.setText("0 %");
         }
-    }
-
-    private int dp2px(int dp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-                getResources().getDisplayMetrics());
     }
 }

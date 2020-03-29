@@ -25,12 +25,11 @@
 
         <TextView
             android:id="@+id/checklist_todo"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="330dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="오늘 할 일"
             android:textStyle="bold"
-            android:textSize="15sp"
-            android:gravity="center_vertical"/>
+            android:textSize="15sp" />
     </LinearLayout>
 </com.example.clfp4.ListView.CheckableLinearLayout>

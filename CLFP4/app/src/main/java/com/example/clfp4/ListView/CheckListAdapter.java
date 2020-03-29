@@ -40,12 +40,14 @@ public class CheckListAdapter extends BaseAdapter {
         }
 
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
+        TextView checklist_checkbox = convertView.findViewById(R.id.checklist_checkbox);
         TextView checklist_todo = convertView.findViewById(R.id.checklist_todo);
 
         // Data Set(checklistData)에서 position에 위치한 데이터 참조 획득
         CheckListData checklistData = checkListDataArrayList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
+        checklist_checkbox.setText(checklistData.getCheckbox());
         checklist_todo.setText(checklistData.getTodo());
 
         return convertView;
@@ -67,6 +69,7 @@ public class CheckListAdapter extends BaseAdapter {
     public void addItem(String todo) {
         CheckListData item = new CheckListData();
 
+//        item.setCheckbox(checkbox); 체크박스 추가 확인
         item.setTodo(todo);
 
         checkListDataArrayList.add(item);
