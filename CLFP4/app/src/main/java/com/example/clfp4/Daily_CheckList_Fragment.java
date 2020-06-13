@@ -31,7 +31,10 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.BasicNetwork;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NoCache;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.clfp4.Network.CustomTask;
@@ -101,8 +104,8 @@ public class Daily_CheckList_Fragment extends Fragment {
 
         // DB 데이터 띄우기
         strDate = getTime(mFormat);
-        //DBVolley(strDate,"0","0","load");
-        dataLoad(strDate);
+        DailyVolley(strDate,"0","0","todoShow");
+        GoalVolley(strDate,setGoal(),"goalShow");
 
         // 추가 버튼 리스너
         btn_add.setOnClickListener(new ImageButton.OnClickListener() {
@@ -115,10 +118,10 @@ public class Daily_CheckList_Fragment extends Fragment {
                 } else {
                     checklistAdapter.addItem(getEdit);
 
-                    //DBVolley(strDate,"0",getEdit,"insert");
+                    DailyVolley(strDate,"0",getEdit,"todoAdd");
 
 
-                    // HttpURLConnection 방법
+                    /*// HttpURLConnection 방법
                     CustomTask customTask = new CustomTask();
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                         customTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, strDate,  "0", getEdit,"insert");
@@ -126,7 +129,7 @@ public class Daily_CheckList_Fragment extends Fragment {
                     } else {
                         customTask.execute(strDate, "0", getEdit, "insert");
                     }
-
+*/
                     // listview 갱신
                     checklistAdapter.notifyDataSetChanged();
                     et_today_todo.setText("");
@@ -134,6 +137,7 @@ public class Daily_CheckList_Fragment extends Fragment {
                     mInputMethodManager.hideSoftInputFromWindow(et_today_todo.getWindowToken(), 0);
                 }
                 setGoal();
+                GoalVolley(strDate,setGoal(),"goalModify");
             }
         });
 
@@ -145,12 +149,13 @@ public class Daily_CheckList_Fragment extends Fragment {
                 CheckListData CheckListData_temp = (CheckListData) checklistAdapter.getItem(position);
                 String ck_text = CheckListData_temp.getTodo();
                 if (checkedItems.get(position)) {
-                    DBVolley(strDate,"1",ck_text,"check");
+                    DailyVolley(strDate,"1",ck_text,"checkModify");
                 } else {
-                    DBVolley(strDate,"0",ck_text,"check");
+                    DailyVolley(strDate,"0",ck_text,"checkModify");
                 }
 
                 setGoal();
+                GoalVolley(strDate,setGoal(),"goalModify");
             }
         });
 
@@ -172,7 +177,7 @@ public class Daily_CheckList_Fragment extends Fragment {
                         String delete_text = CheckListData_temp.getTodo();
                        // Log.v("삭제", delete_text);
 
-                        DBVolley(strDate,"0",getEdit,"delete");
+                        DailyVolley(strDate,"0",delete_text,"todoDelete");
 
                         // 아래 method를 호출하지 않을 경우, 삭제된 item이 화면에 계속 보여진다.
                         checklistAdapter.removeItem(position);
@@ -193,6 +198,7 @@ public class Daily_CheckList_Fragment extends Fragment {
                 alertDlg.show();
 
                 setGoal();
+                GoalVolley(strDate,setGoal(),"goalModify");
 
                 // 이벤트 처리 종료 , 여기만 리스너 적용시키고 싶으면 true , 아니면 false
                 return true;
@@ -227,7 +233,8 @@ public class Daily_CheckList_Fragment extends Fragment {
                             i++;
                         }
 
-                        DBVolley(strDate,"0","0","load");
+                        DailyVolley(strDate,"0","0","todoShow");
+                        GoalVolley(strDate,"0","goalShow");
                     }
                 };
 
@@ -255,18 +262,24 @@ public class Daily_CheckList_Fragment extends Fragment {
         return Format.format(mDate);
     }
 
-    public void setGoal() {
+    public String setGoal() {
+        String goal = null;
         tv_goal = getView().findViewById(R.id.tv_goal);
         count = listview_todolist.getCheckedItemCount();
         count_all = checklistAdapter.getCount();
 
-        if (count > 0) {
+        if (count > 0.0 ) {
             double rate = Double.parseDouble(String.format("%.2f", count / count_all));
             int goal_rate = (int) (rate * 100);
             tv_goal.setText(goal_rate + " %");
+            goal = goal_rate + " %";
         } else {
             tv_goal.setText("0 %");
+            goal = "0 %";
         }
+        Log.v("카운트 :", String.valueOf(count));
+
+        return goal;
     }
 
     public void dataLoad(String date) {
@@ -307,41 +320,59 @@ public class Daily_CheckList_Fragment extends Fragment {
         }
     }
 
-    public void DBVolley(final String date, final String check, final String todo , final String type) {
+    public void DailyVolley(final String date, final String check, final String todo , final String type) {
         // 1. RequestQueue 생성 및 초기화
         RequestQueue requestQueue = (RequestQueue) Volley.newRequestQueue(this.getActivity());
-        String url = "http://192.168.35.69:8080/CheckList/Daily.jsp";
+        requestQueue.getCache().clear();
+        String url = "http://192.168.35.92:8080/CheckList/Daily.jsp";
 
         // 2. Request Obejct인 StringRequest 생성
         StringRequest request = new StringRequest(Request.Method.POST, url,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if(response.equals("삽입 완료!") || response.equals("삭제 완료!") || response.equals("변경 완료!")) {
-                                 Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                             }
+                            if(response.equals("todoAddSuccess"))
+                            {
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
+                            else if(response.equals("todoNotExist")){
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
+                            else if(response.equals("todoModify")){
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
+                            else if(response.equals("todoDelete")){
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
+                            else if(response.equals("error")){
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
+                            else if(response.equals("todoNotExist")){
+                                Toast.makeText(getContext(), "오늘의 일정을 등록하세요.", Toast.LENGTH_SHORT).show();
+                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                            }
                             else {
                                 try {
-                                    JSONArray jarray = new JSONObject(response).getJSONArray("save_data");
-                                    int size = jarray.length();
-                                    for (int i = 0; i < size; i++) {
-                                        JSONObject jsonObject = jarray.getJSONObject(i);
-                                        String save_check = jsonObject.getString("save_check");
-                                        String save_text = jsonObject.getString("save_todo");
+                                JSONArray jarray = new JSONArray(response);
+                                int size = jarray.length();
+                                for (int i = 0; i < size; i++) {
+                                    JSONObject jsonObject = jarray.getJSONObject(i);
+                                    String save_check = jsonObject.getString("save_check");
+                                    String save_text = jsonObject.getString("save_todo");
 
-                                        if (save_check.equals("1")) {
-                                            checklistAdapter.addItem(save_text);
-                                            listview_todolist.setItemChecked(i, true);
-                                            checklistAdapter.notifyDataSetChanged();
-                                        } else {
-                                            checklistAdapter.addItem(save_text);
-                                            checklistAdapter.notifyDataSetChanged();
-                                        }
+                                    if (save_check.equals("1")) {
+                                        checklistAdapter.addItem(save_text);
+                                        listview_todolist.setItemChecked(i, true);
+                                        checklistAdapter.notifyDataSetChanged();
+                                    } else {
+                                        checklistAdapter.addItem(save_text);
+                                        checklistAdapter.notifyDataSetChanged();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
+                        }
 
                         }
                     },
@@ -356,15 +387,67 @@ public class Daily_CheckList_Fragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
-                    params.put("save_date", date);
-                    params.put("save_check", check);
-                    params.put("save_todo", todo);
+                    params.put("date", date);
+                    params.put("check", check);
+                    params.put("todo", todo);
                     params.put("type", type);
                     return params;
                 }
             };
         // 3) 생성한 StringRequest를 RequestQueue에 추가
+        request.setShouldCache(false);
         requestQueue.add(request);
+
+    }
+
+    public void GoalVolley(final String date, final String goal, final String type) {
+        // 1. RequestQueue 생성 및 초기화
+        RequestQueue requestQueue2 = (RequestQueue) Volley.newRequestQueue(this.getActivity());
+        requestQueue2.getCache().clear();
+        String url = "http://192.168.35.92:8080/CheckList/Goal.jsp";
+
+        // 2. Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("goalNotExist"))
+                        {
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("goalModify")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("error")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else{
+                            tv_goal.setText(response);
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Log.d("통신 에러", "[" + error.getMessage() + "]");
+                        Log.v("통신 에러 이유",error.getStackTrace().toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("date", date);
+                params.put("goal", goal);
+                params.put("type", type);
+                return params;
+            }
+        };
+
+        // 3) 생성한 StringRequest를 RequestQueue에 추가
+        request.setShouldCache(false);
+        requestQueue2.add(request);
 
     }
 }
