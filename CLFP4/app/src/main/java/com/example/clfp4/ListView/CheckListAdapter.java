@@ -1,17 +1,35 @@
 package com.example.clfp4.ListView;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.clfp4.Network.AppHelper;
 import com.example.clfp4.R;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CheckListAdapter extends BaseAdapter {
+
+    private String url_daily = "http://192.168.35.92:8080/CheckList/Daily.jsp";
 
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<CheckListData> checkListDataArrayList = new ArrayList<CheckListData>() ;
@@ -74,5 +92,92 @@ public class CheckListAdapter extends BaseAdapter {
     // 아이템 삭제를 위한 함수.
     public void removeItem(int i){
         checkListDataArrayList.remove(i);
+    }
+
+    // 아이템 추가
+    public void todolist_AddRequest(final String date, final String todo) {
+
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_daily,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("todoAddSuccess"))
+                        {
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("error")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else {
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Log.d("통신 에러", "[" + error.getMessage() + "]");
+                        Log.v("통신 에러 이유",error.getStackTrace().toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("date",date);
+                params.put("todo",todo);
+                params.put("type", "todoAdd");
+                return params;
+            }
+        };
+
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
+
+    }
+
+    // 아이템 삭제
+    public void todolist_DeleteRequest(final String date, final String todo) {
+
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_daily,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("todoDelete")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("error")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else {
+
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                        Log.d("통신 에러", "[" + error.getMessage() + "]");
+                        Log.v("통신 에러 이유",error.getStackTrace().toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("date",date);
+                params.put("todo",todo);
+                params.put("type", "todoDelete");
+                return params;
+            }
+        };
+
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
+
     }
 }

@@ -41,7 +41,7 @@ public class DailyCnt {
 	}
 	
 	public void todoAddCheck(String date, String check, String todo) {
-		result = dailyCnt.todoAdd(this.date,  this.check,  this.todo);
+		result = dailyCnt.todoAdd(this.date, this.todo);
 	}
 	
 	public void checkModifyCheck(String date, String check, String todo) {

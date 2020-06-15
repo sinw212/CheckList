@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,16 +28,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.BasicNetwork;
-import com.android.volley.toolbox.HurlStack;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.NoCache;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.clfp4.Network.CustomTask;
 import com.example.clfp4.ListView.CheckListAdapter;
 import com.example.clfp4.ListView.CheckListData;
+import com.example.clfp4.Network.AppHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,12 +59,16 @@ public class Daily_CheckList_Fragment extends Fragment {
     private EditText et_today_todo;
     private ListView listview_todolist;
     private CheckListAdapter checklistAdapter;
+    private String ck_text;
 
     private String getEdit;
     private double count = 0.0;
     private double count_all = 0.0;
 
     private String strDate;
+
+    private String url_daily = "http://192.168.35.92:8080/CheckList/Daily.jsp";
+    private String url_goal = "http://192.168.35.92:8080/CheckList/Goal.jsp";
 
     @Nullable
     @Override
@@ -102,10 +99,13 @@ public class Daily_CheckList_Fragment extends Fragment {
         // 리스트뷰 참조 및 Adapter달기
         listview_todolist.setAdapter(checklistAdapter);
 
+        // request queue 는 앱이 시작되었을 때 한 번 초기화되기만 하면 계속 사용이 가능
+        if(AppHelper.requestqueue == null)
+            AppHelper.requestqueue = Volley.newRequestQueue(this.getActivity());
+
         // DB 데이터 띄우기
-        strDate = getTime(mFormat);
-        DailyVolley(strDate,"0","0","todoShow");
-        GoalVolley(strDate,setGoal(),"goalShow");
+        todolist_SelectRequest();
+        goal_SelectReques();
 
         // 추가 버튼 리스너
         btn_add.setOnClickListener(new ImageButton.OnClickListener() {
@@ -117,45 +117,36 @@ public class Daily_CheckList_Fragment extends Fragment {
                     Toast.makeText(getContext(), "내용을 입력하세요.", Toast.LENGTH_SHORT).show();
                 } else {
                     checklistAdapter.addItem(getEdit);
+                    checklistAdapter.todolist_AddRequest(tv_date.getText().toString(),getEdit);
 
-                    DailyVolley(strDate,"0",getEdit,"todoAdd");
-
-
-                    /*// HttpURLConnection 방법
-                    CustomTask customTask = new CustomTask();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        customTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, strDate,  "0", getEdit,"insert");
-                        Log.v("왜","왜요?");
-                    } else {
-                        customTask.execute(strDate, "0", getEdit, "insert");
-                    }
-*/
                     // listview 갱신
                     checklistAdapter.notifyDataSetChanged();
                     et_today_todo.setText("");
+
+                    // 키보드 숨기기
                     InputMethodManager mInputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     mInputMethodManager.hideSoftInputFromWindow(et_today_todo.getWindowToken(), 0);
                 }
                 setGoal();
-                GoalVolley(strDate,setGoal(),"goalModify");
+                goal_ModifyReques(setGoal());
             }
         });
 
-        // 리스트뷰 리스너
+        // 리스트뷰 리스너 (체크 여부)
         listview_todolist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 SparseBooleanArray checkedItems = listview_todolist.getCheckedItemPositions();
                 CheckListData CheckListData_temp = (CheckListData) checklistAdapter.getItem(position);
-                String ck_text = CheckListData_temp.getTodo();
+                ck_text = CheckListData_temp.getTodo();
+                String ck_data = "0";
                 if (checkedItems.get(position)) {
-                    DailyVolley(strDate,"1",ck_text,"checkModify");
-                } else {
-                    DailyVolley(strDate,"0",ck_text,"checkModify");
+                    ck_data = "1";
                 }
+                todolist_CheckModifyRequest(ck_data);
 
                 setGoal();
-                GoalVolley(strDate,setGoal(),"goalModify");
+                goal_ModifyReques(setGoal());
             }
         });
 
@@ -175,9 +166,8 @@ public class Daily_CheckList_Fragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         CheckListData CheckListData_temp = (CheckListData) checklistAdapter.getItem(position);
                         String delete_text = CheckListData_temp.getTodo();
-                       // Log.v("삭제", delete_text);
 
-                        DailyVolley(strDate,"0",delete_text,"todoDelete");
+                        checklistAdapter.todolist_DeleteRequest(tv_date.getText().toString(),delete_text);
 
                         // 아래 method를 호출하지 않을 경우, 삭제된 item이 화면에 계속 보여진다.
                         checklistAdapter.removeItem(position);
@@ -198,7 +188,7 @@ public class Daily_CheckList_Fragment extends Fragment {
                 alertDlg.show();
 
                 setGoal();
-                GoalVolley(strDate,setGoal(),"goalModify");
+                goal_ModifyReques(setGoal());
 
                 // 이벤트 처리 종료 , 여기만 리스너 적용시키고 싶으면 true , 아니면 false
                 return true;
@@ -233,8 +223,9 @@ public class Daily_CheckList_Fragment extends Fragment {
                             i++;
                         }
 
-                        DailyVolley(strDate,"0","0","todoShow");
-                        GoalVolley(strDate,"0","goalShow");
+                        // 체크리스트 목록, 달성률 띄움
+                        todolist_SelectRequest();
+                        goal_SelectReques();
                     }
                 };
 
@@ -250,7 +241,6 @@ public class Daily_CheckList_Fragment extends Fragment {
 
                 DatePickerDialog oDialog = new DatePickerDialog(getContext(),
                         mDateSetListener, nYear, nMon, nDay);
-
                 oDialog.show();
             }
         });
@@ -282,75 +272,21 @@ public class Daily_CheckList_Fragment extends Fragment {
         return goal;
     }
 
-    public void dataLoad(String date) {
-        try {
-            String result = null;
-            CustomTask customTask = new CustomTask();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                result = customTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, date, "0", "0", "load").get();
-            } else {
-                result = customTask.execute(getTime(mFormat), "0", "0", "load").get();
-            }
+    // 체크리스트 목록 조회
+    public void todolist_SelectRequest() {
 
-            JSONArray jarray = new JSONObject(result).getJSONArray("save_data");
-            int size = jarray.length();
-            for (int i = 0; i < size; i++) {
-                JSONObject jsonObject = jarray.getJSONObject(i);
-                String save_check = jsonObject.getString("save_check");
-                String save_todo = jsonObject.getString("save_todo");
-
-                // null을 가끔 못 읽어오는 때가 있다고 하기에 써봄
-                //String Start = jsonObject.optString("START_TIME", "text on no value");
-                //String Stop = jsonObject.optString("STOP_TIME", "text on no value");
-                //String REG = jsonObject.optString("REG_TIME", "text on no value");
-
-                if (save_check.equals("1")) {
-                    checklistAdapter.addItem(save_todo);
-                    listview_todolist.setItemChecked(i, true);
-                    checklistAdapter.notifyDataSetChanged();
-                } else {
-                    checklistAdapter.addItem(save_todo);
-                    checklistAdapter.notifyDataSetChanged();
-                }
-
-                Log.d("JSON 값", save_todo + "/" + save_check);
-            }
-        } catch (Exception e) {
-            Log.e("JSON 에러", e.getMessage());
-        }
-    }
-
-    public void DailyVolley(final String date, final String check, final String todo , final String type) {
-        // 1. RequestQueue 생성 및 초기화
-        RequestQueue requestQueue = (RequestQueue) Volley.newRequestQueue(this.getActivity());
-        requestQueue.getCache().clear();
-        String url = "http://192.168.35.92:8080/CheckList/Daily.jsp";
-
-        // 2. Request Obejct인 StringRequest 생성
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_daily,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if(response.equals("todoAddSuccess"))
-                            {
-                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                            }
-                            else if(response.equals("todoNotExist")){
-                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                            }
-                            else if(response.equals("todoModify")){
-                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                            }
-                            else if(response.equals("todoDelete")){
-                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                            }
-                            else if(response.equals("error")){
-                                Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                            }
-                            else if(response.equals("todoNotExist")){
+                           if(response.equals("todoNotExist")){
                                 Toast.makeText(getContext(), "오늘의 일정을 등록하세요.", Toast.LENGTH_SHORT).show();
                                 Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
                             }
+                           else if(response.equals("error")){
+                               Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                           }
                             else {
                                 try {
                                 JSONArray jarray = new JSONArray(response);
@@ -387,43 +323,24 @@ public class Daily_CheckList_Fragment extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
-                    params.put("date", date);
-                    params.put("check", check);
-                    params.put("todo", todo);
-                    params.put("type", type);
+                    params.put("date",tv_date.getText().toString());
+                    params.put("type", "todoShow");
                     return params;
                 }
             };
-        // 3) 생성한 StringRequest를 RequestQueue에 추가
-        request.setShouldCache(false);
-        requestQueue.add(request);
+
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
 
     }
 
-    public void GoalVolley(final String date, final String goal, final String type) {
-        // 1. RequestQueue 생성 및 초기화
-        RequestQueue requestQueue2 = (RequestQueue) Volley.newRequestQueue(this.getActivity());
-        requestQueue2.getCache().clear();
-        String url = "http://192.168.35.92:8080/CheckList/Goal.jsp";
-
-        // 2. Request Obejct인 StringRequest 생성
-        StringRequest request = new StringRequest(Request.Method.POST, url,
+    // 체크 수정
+    public void todolist_CheckModifyRequest(final String check) {
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_daily,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        if(response.equals("goalNotExist"))
-                        {
-                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                        }
-                        else if(response.equals("goalModify")){
-                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                        }
-                        else if(response.equals("error")){
-                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
-                        }
-                        else{
-                            tv_goal.setText(response);
-                        }
 
                     }
                 },
@@ -438,16 +355,98 @@ public class Daily_CheckList_Fragment extends Fragment {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("date", date);
-                params.put("goal", goal);
-                params.put("type", type);
+                params.put("date",tv_date.getText().toString());
+                params.put("check", check);
+                params.put("todo", ck_text);
+                params.put("type", "checkModify");
                 return params;
             }
         };
 
-        // 3) 생성한 StringRequest를 RequestQueue에 추가
-        request.setShouldCache(false);
-        requestQueue2.add(request);
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
+
+    }
+
+    // goal 조회
+    public void goal_SelectReques() {
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_goal,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("goalNotExist"))
+                        {
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("error")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else{
+                            tv_goal.setText(response);
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("통신 에러", "[" + error.getMessage() + "]");
+                        Log.v("통신 에러 이유",error.getStackTrace().toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("date", tv_date.getText().toString());
+                params.put("type", "goalShow");
+                return params;
+            }
+        };
+
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
+
+    }
+
+    // goal 수정
+    public void goal_ModifyReques(final String goal) {
+        // Request Obejct인 StringRequest 생성
+        StringRequest request = new StringRequest(Request.Method.POST, url_goal,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("goalModify")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else if(response.equals("error")){
+                            Log.d("통신 메세지", "[" + response + "]"); // 서버와의 통신 결과 확인 목적
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("통신 에러", "[" + error.getMessage() + "]");
+                        Log.v("통신 에러 이유",error.getStackTrace().toString());
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("date", tv_date.getText().toString());
+                params.put("goal",goal);
+                params.put("type", "goalModify");
+                return params;
+            }
+        };
+
+        request.setShouldCache(false); // 이전 결과가 있더라도 새로 요청해서 응답을 보여줌
+        AppHelper.requestqueue.add(request); // request queue 에 request 객체를 넣어준다.
 
     }
 }

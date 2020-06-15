@@ -81,7 +81,7 @@ private static Daily instance = new Daily();
 	}
 	
 	
-	public String todoAdd(String date, String check, String todo) {	// 오늘 할일 등록
+	public String todoAdd(String date, String todo) {	// 오늘 할일 등록
 			try {
 				conn = cDB.getConn();
 				
@@ -89,7 +89,7 @@ private static Daily instance = new Daily();
 				sql = "insert into daily (save_date, save_check, save_todo) values (?, ?, ?)";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, date);
-				pstmt.setString(2, check);
+				pstmt.setString(2, "0");
 				pstmt.setString(3, todo);
 				pstmt.executeUpdate();	//	db에 쿼리문 입력
 				returns = "todoAddSuccess";
