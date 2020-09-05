@@ -13,11 +13,13 @@ public class GoalCnt {
 	
 	public GoalCnt(String type, String date, String goal) {
 		this.type = type;
+		this.date = date;
+		this.goal = goal;
 		
-		if(type.getBytes().equals("goalShow")) {
+		if(type.equals("goalShow")) {
 			goalShowCheck(date);
 		}
-		else if(type.getBytes().equals("goalModify")) {
+		else if(type.equals("goalModify")) {
 			goalModifyCheck(date, goal);
 		}
 		else {

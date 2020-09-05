@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class ConnectDB {
 
-	String dbURL = "jdbc:mysql://localhost:3306/CheckList"; // MySQL 계정
+	String dbURL = "jdbc:mysql://192.168.35.92:3306/checklist_db"; // MySQL 계정
 	String dbID = "root"; // MySQL 계정
 	String dbPW = "1234";
 	
@@ -21,11 +21,12 @@ public class ConnectDB {
 			Class.forName("com.mysql.jdbc.Driver");
 			return DriverManager.getConnection(dbURL, dbID, dbPW);
 		} catch (SQLException e) {
-			System.err.println("DBconnectorIoT Connection error");
+			System.err.println("ConnectDB Connection error");
+			System.err.println(e.getMessage());
 			return null;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			System.err.println("DBConnector  ClassNotFoundException error");
+			System.err.println("ConnectDB  ClassNotFoundException error");
 			return null;
 		}
 	}

@@ -19,7 +19,7 @@ import java.util.Date;
 public class Monthly_Statistics_Fragment extends Fragment {
     private long mNow;
     private Date mDate;
-    private SimpleDateFormat mFormat = new SimpleDateFormat("YYYY년");
+    private SimpleDateFormat mFormat = new SimpleDateFormat("yyyy년");
 
     private Calendar c;
     private int nYear,nMon,nDay;

@@ -14,18 +14,22 @@ public class DailyCnt {
 	
 	public DailyCnt(String type, String date, String check, String todo) {
 		this.type = type;
+		this.date = date;
+		this.check = check;
+		this.todo = todo;
+		System.out.println("Type : "+ type);
 		
-		if(type.getBytes().equals("todoShow")) {
+		if(type.equals("todoShow")) {
 			todoShowCheck(date);
 		}
-		else if(type.getBytes().equals("todoAdd")) {
+		else if(type.equals("todoAdd")) {
 			todoAddCheck(date, check, todo);
 		}
-		else if(type.getBytes().equals("checkModify") ) {
-			checkModifyCheck(date, check);
+		else if(type.equals("checkModify") ) {
+			checkModifyCheck(date, check, todo);
 		}
-		else if(type.getBytes().equals("todoDelete")) {
-			todoDeleteCheck(date, check, todo);
+		else if(type.equals("todoDelete")) {
+			todoDeleteCheck(date, todo);
 		}
 		else {
 			todoError();
@@ -37,15 +41,15 @@ public class DailyCnt {
 	}
 	
 	public void todoAddCheck(String date, String check, String todo) {
-		result = dailyCnt.todoAdd(this.date,  this.check,  this.todo);
+		result = dailyCnt.todoAdd(this.date, this.todo);
 	}
 	
-	public void checkModifyCheck(String date, String check) {
-		result = dailyCnt.checkModify(this.date, this.check);
+	public void checkModifyCheck(String date, String check, String todo) {
+		result = dailyCnt.checkModify(this.date, this.check, this.todo);
 	}
 	
-	public void todoDeleteCheck(String date, String check, String todo) {
-		result = dailyCnt.todoDelete(this.date, this.check, this.todo);
+	public void todoDeleteCheck(String date, String todo) {
+		result = dailyCnt.todoDelete(this.date, this.todo);
 	}
 	
 	public void todoError() {

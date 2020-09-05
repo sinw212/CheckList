@@ -17,18 +17,17 @@ private static Daily instance = new Daily();
 	
 	//	DB접근
 	private ConnectDB cDB = new ConnectDB();	//	DBConnector 객체생성
-	private Connection conn;    //  connecttion:db에 접근하게 해주는 객체
+	private Connection conn = null;    //  connecttion:db에 접근하게 해주는 객체
 	private String sql = "";
-	private String sql2 = "";
 	private PreparedStatement pstmt;
-	private PreparedStatement pstmt2;
 	private ResultSet rs;	
 	private String returns;
 	
 	public String todoShow(String date) {	//오늘 할일 목록 보여주기
 			try {
+				System.out.println(date);
 				conn = cDB.getConn();
-				sql = "select * from Daily where save_date=?";
+				sql = "select * from daily where save_date=?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, date);
 				rs = pstmt.executeQuery();		
@@ -37,7 +36,8 @@ private static Daily instance = new Daily();
 				boolean flag = true;
 				while(rs.next()) {
 					JSONObject jobj = new JSONObject();
-					jobj.put("save_todo", rs.getString("save_todo"));
+					jobj.put("save_check",rs.getString("save_check"));
+					jobj.put("save_todo",rs.getString("save_todo"));
 					jary.add(jobj);
 					
 					flag = false;
@@ -45,7 +45,7 @@ private static Daily instance = new Daily();
 				returns = jary.toJSONString();
 				if(flag) {	//	할일이 존재하지 않을 때
 					returns = "todoNotExist";
-				}
+				} 
 				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -74,32 +74,25 @@ private static Daily instance = new Daily();
 						returns = "error";
 					}
 			}		
+			
+			System.out.println(returns);
 					
 		return returns;
 	}
 	
 	
-	public String todoAdd(String date, String check, String todo) {	// 오늘 할일 등록
+	public String todoAdd(String date, String todo) {	// 오늘 할일 등록
 			try {
 				conn = cDB.getConn();
-				sql = "select * from Daily where save_todo=? and save_date=?";
+				
+				//	해당 날짜의 할일이 존재하지 않을 때 - 새로생성
+				sql = "insert into daily (save_date, save_check, save_todo) values (?, ?, ?)";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, date);
-				rs = pstmt.executeQuery();
-				
-				if(rs.next()) {	//	해당 날짜에 같은 할일이 존재할 때
-					returns = "todoAlreadyExist";
-				}
-				else {	//	해당 날짜의 할일이 존재하지 않을 때 - 새로생성
-					sql2 = "insert into Daily (save_date, save_check, save_todo) values (?, ?, ?)";
-					pstmt2 = conn.prepareStatement(sql2);
-					pstmt2.setString(1, date);
-					pstmt2.setString(2, check);
-					pstmt2.setString(3, todo);
-					pstmt2.executeUpdate();	//	db에 쿼리문 입력
-					returns = "todoAddSuccess";
-				}
-				returns = "todoAdded";
+				pstmt.setString(2, "0");
+				pstmt.setString(3, todo);
+				pstmt.executeUpdate();	//	db에 쿼리문 입력
+				returns = "todoAddSuccess";
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Daily todoAdd SQLException error");
@@ -128,25 +121,23 @@ private static Daily instance = new Daily();
 					}
 			}
 			
+			System.out.println(returns);
+			
 		return returns;
 	}	
 	
 	
-	public String checkModify(String date, String check) {	//할일 체크박스 수정
+	public String checkModify(String date, String check, String todo) {	//할일 체크박스 수정
 			try {
 				conn = cDB.getConn();
-				sql = "select * from Daily where save_date=?";
+				
+				sql = "update daily set save_check=? where save_date=? and save_todo=?";
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, date);
-				rs = pstmt.executeQuery();
-				if(rs.next()) {	//오늘 할 일이 존재할 때
-					sql2 = "update calander set save_check=? where save_date=?";
-					pstmt2 = conn.prepareStatement(sql2);
-					pstmt2.setString(1, check);
-					pstmt2.setString(2, date);
-					pstmt2.executeUpdate();	//	db에 쿼리문 입력
-					returns = "todoModify";				
-				}
+				pstmt.setString(1, check);
+				pstmt.setString(2, date);
+				pstmt.setString(3, todo);
+				pstmt.executeUpdate();	//	db에 쿼리문 입력
+				returns = "todoModify";				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Daily todoModify SQLException error");
@@ -157,6 +148,7 @@ private static Daily instance = new Daily();
 						pstmt.close();
 					} catch (SQLException ex) {
 						System.err.println("Daily todoModify SQLException error");
+						System.err.println(ex.getMessage());
 						returns = "error";
 					}
 				if (conn != null)
@@ -164,6 +156,7 @@ private static Daily instance = new Daily();
 						conn.close();
 					} catch (SQLException ex) {
 						System.err.println("Daily todoModify SQLException error");
+						System.err.println(ex.getMessage());
 						returns = "error";
 					}
 				if (rs != null)
@@ -171,39 +164,27 @@ private static Daily instance = new Daily();
 						rs.close();
 					} catch (SQLException ex) {
 						System.err.println("Daily todoModify SQLException error");
+						System.err.println(ex.getMessage());
 						returns = "error";
 					}				
-				if (pstmt2 != null)
-					try {
-						pstmt2.close();
-					} catch (SQLException ex) {
-						System.err.println("Daily todoModify SQLException error");
-						returns = "error";
-					}
+				
 			}	
 			
 		return returns;
 	}
 	
 	
-	public String todoDelete (String date, String check, String todo) {	//오늘 할일 삭제
+	public String todoDelete (String date, String todo) {	//오늘 할일 삭제
 			try {
 				conn = cDB.getConn();
-				sql = "select * from Daily where save_date=? and save_check=? and save_todo=?";
+				
+				//오늘 할일이 존재할 때
+				sql = "delete from daily where save_date=? and save_todo =?";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, date);
-				pstmt.setString(2, check);
-				pstmt.setString(3, todo);
-				rs = pstmt.executeQuery();
-				if(rs.next()) {	//오늘 할일이 존재할 때
-					sql2 = "delete from calander where save_date=? and save_check=? and save_date=?";
-					pstmt2 = conn.prepareStatement(sql2);
-					pstmt2.setString(1, date);
-					pstmt2.setString(2, check);
-					pstmt2.setString(3, todo);
-					pstmt2.executeUpdate();	//	db에 쿼리문 입력
-					returns = "todoDelete";				
-				}
+				pstmt.setString(2, todo);
+				pstmt.executeUpdate();	//	db에 쿼리문 입력
+				returns = "todoDelete";				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				System.err.println("Daily todoDelete SQLException error");
@@ -230,13 +211,7 @@ private static Daily instance = new Daily();
 						System.err.println("Daily todoDelete SQLException error");
 						returns = "error";
 					}				
-				if (pstmt2 != null)
-					try {
-						pstmt2.close();
-					} catch (SQLException ex) {
-						System.err.println("Daily todoDelete SQLException error");
-						returns = "error";
-					}
+				
 			}	
 			
 		return returns;

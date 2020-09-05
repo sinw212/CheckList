@@ -31,5 +31,7 @@
             android:text="오늘 할 일"
             android:textStyle="bold"
             android:textSize="15sp" />
+
     </LinearLayout>
+
 </com.example.clfp4.ListView.CheckableLinearLayout>
