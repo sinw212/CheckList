@@ -12,10 +12,10 @@ public class MainActivity extends AppCompatActivity {
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
 
-    private daily4 daily4 = new daily4();
-    private weekly4 weekly4 = new weekly4();
-    private monthly4 monthly4 = new monthly4();
-    private help4 help4 = new help4();
+    private Daily_CheckList_Fragment daily_checklist = new Daily_CheckList_Fragment();
+    private Daily_Statistics_Fragment daily_statistics = new Daily_Statistics_Fragment();
+    private Monthly_Statistics_Fragment monthly_statistics = new Monthly_Statistics_Fragment();
+    private Help_Fragment help = new Help_Fragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frame_layout, daily4).commitAllowingStateLoss();
+        transaction.replace(R.id.frame_layout, daily_checklist).commitAllowingStateLoss();
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -33,20 +33,20 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
 
                 switch(item.getItemId()) {
-                    case R.id.daily: {
-                        transaction.replace(R.id.frame_layout, daily4).commitAllowingStateLoss();
+                    case R.id.daily_checklist: {
+                        transaction.replace(R.id.frame_layout, daily_checklist).commitAllowingStateLoss();
                         break;
                     }
-                    case R.id.weekly: {
-                        transaction.replace(R.id.frame_layout, weekly4).commitAllowingStateLoss();
+                    case R.id.daily_statistics: {
+                        transaction.replace(R.id.frame_layout, daily_statistics).commitAllowingStateLoss();
                         break;
                     }
-                    case R.id.monthly: {
-                        transaction.replace(R.id.frame_layout, monthly4).commitAllowingStateLoss();
+                    case R.id.monthly_statistics: {
+                        transaction.replace(R.id.frame_layout, monthly_statistics).commitAllowingStateLoss();
                         break;
                     }
-                    case R.id.login: {
-                        transaction.replace(R.id.frame_layout, help4).commitAllowingStateLoss();
+                    case R.id.help: {
+                        transaction.replace(R.id.frame_layout, help).commitAllowingStateLoss();
                         break;
                     }
                 }

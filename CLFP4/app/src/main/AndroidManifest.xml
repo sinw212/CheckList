@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.clfp4">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_icon"
@@ -12,7 +14,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".main4"
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
 
@@ -26,13 +28,6 @@
         <activity
             android:name=".MainActivity">
         </activity>
-
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
-            android:exported="true"
-            android:process=":remote" >
-        </receiver>
 
     </application>
 

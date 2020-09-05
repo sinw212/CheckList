@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="30dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:weightSum="10">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="도움말"
+        android:textSize="30sp"
+        android:textColor="@android:color/black"
+        android:layout_weight="2"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="
+  본 서비스는 사용자의 계획 달성률을 통계내어 성과를 보여줌으로써, 보다 효율적인 자기관리를 할 수 있도록 도움을 제공하는 서비스입니다.
+제공되는 기능은 아래와 같습니다.\n\n
+
+ - 일일 : 사용자가 그 날 할 일을 기록할 수 있으며, 본인의 계획 달성 여부를 체크함으로써 일일 달성률을 확인할 수 있습니다.\n\n
+ - 주간 : 매 달의 주간 평균 달성률을 꺾은선 그래프를 통해 한눈에 확인할 수 있습니다.\n\n
+ - 월별 : 매 달의 평균 달성률을 꺾은선 그래프를 통해 한눈에 확인할 수 있습니다.\n\n
+ - 달력 : 매 달의 달력 및 일일 달성률을 한눈에 확인할 수 있으며, 해당 날짜를 누르면 해당 일일 메뉴로 이동할 수 있습니다.\n\n
+
+  @copyright 2019.CLFP\n\n
+  문의연락 : sinw212@gmail.com"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:layout_weight="8"
+        android:layout_marginBottom="10dp"/>
+
+</LinearLayout>
